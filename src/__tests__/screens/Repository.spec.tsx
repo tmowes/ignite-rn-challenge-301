@@ -1,24 +1,26 @@
-import React from 'react';
-import { Linking } from 'react-native';
-import { render, fireEvent } from '@testing-library/react-native';
+/* eslint-disable jest/expect-expect */
+import React from 'react'
+import { Linking } from 'react-native'
 
-import { Repository } from '../../screens/Repository';
-import { ProvidersWrapper } from '../../../jest-utils/wrapper';
+import { render, fireEvent } from '@testing-library/react-native'
+
+import { Repository } from '../../screens/Repository'
+import { ProvidersWrapper } from '../../../jest-utils/wrapper'
 
 jest.mock('@react-navigation/core', () => ({
   useRoute: () => ({
     params: {
-      repositoryId: 0
-    }
+      repositoryId: 0,
+    },
   }),
-}));
+}))
 jest.mock('../../hooks/useRepositories', () => ({
   useRepositories: () => ({
     findRepositoryById: () => ({
       id: 0,
       full_name: 'facebook/react',
       owner: {
-        avatar_url: 'https://github.com/facebook.png'
+        avatar_url: 'https://github.com/facebook.png',
       },
       description: 'repository description',
       stargazers_count: 0,
@@ -32,34 +34,34 @@ jest.mock('../../hooks/useRepositories', () => ({
           html_url: 'http://issue-html_url',
           user: {
             login: 'user-login',
-          }
-        }
-      ]
-    })
-  })
+          },
+        },
+      ],
+    }),
+  }),
 }))
 
 describe('Repository', () => {
   it('should be able to show repository data', async () => {
     const { findByText, getByText } = render(<Repository />, {
-      wrapper: ProvidersWrapper
-    });
+      wrapper: ProvidersWrapper,
+    })
 
-    await findByText('facebook/react');
-    getByText('repository description');
-    getByText('issue-title');
-  });
+    await findByText('facebook/react')
+    getByText('repository description')
+    getByText('issue-title')
+  })
 
   it('should be able to open issue on browser', async () => {
-    const openURLJestSpy = jest.spyOn(Linking, 'openURL');
+    const openURLJestSpy = jest.spyOn(Linking, 'openURL')
 
     const { findByText } = render(<Repository />, {
-      wrapper: ProvidersWrapper
-    });
+      wrapper: ProvidersWrapper,
+    })
 
-    const issueCard = await findByText('issue-title');
-    fireEvent.press(issueCard);
+    const issueCard = await findByText('issue-title')
+    fireEvent.press(issueCard)
 
     expect(openURLJestSpy).toHaveBeenCalledWith('http://issue-html_url')
-  });
+  })
 })

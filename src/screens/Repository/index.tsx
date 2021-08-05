@@ -1,11 +1,11 @@
-import React from 'react';
-import { useRoute } from '@react-navigation/core';
-import { Linking } from 'react-native';
-import { useRepositories } from '../../hooks/useRepositories';
+import React from 'react'
+import { Linking } from 'react-native'
 
-import { Background } from '../../components/Background';
-import { Card } from '../../components/Card';
+import { useRoute } from '@react-navigation/core'
 
+import { useRepositories } from '../../hooks/useRepositories'
+import { Background } from '../../components/Background'
+import { Card } from '../../components/Card'
 import {
   Container,
   RepoInfo,
@@ -23,61 +23,49 @@ import {
   OpenIssuesCounter,
   OpenIssuesText,
   IssuesList,
-} from './styles';
-import { TitleAnimation } from './TitleAnimation';
+} from './styles'
+import { TitleAnimation } from './TitleAnimation'
 
 interface RepositoryParams {
-  repositoryId: number;
+  repositoryId: number
 }
 
 export function Repository() {
-  const { params } = useRoute();
-  const { repositoryId } = params as RepositoryParams;
-  const { findRepositoryById } = useRepositories();
-  const repository = findRepositoryById(repositoryId);
+  const { params } = useRoute()
+  const { repositoryId } = params as RepositoryParams
+  const { findRepositoryById } = useRepositories()
+  const repository = findRepositoryById(repositoryId)
 
   function handleIssueNavigation(issueUrl: string) {
-    // TODO - use Linking to open issueUrl in a browser
+    Linking.openURL(issueUrl)
   }
 
   return (
     <Background>
       <Container>
         <RepoInfo>
-          {/* <OwnerAvatar source={{ uri:  }} /> */}
+          <OwnerAvatar source={{ uri: repository.owner.avatar_url }} />
 
           <TextGroup>
-            <TitleAnimation>
-              {
-                // TODO - full name of the repository
-              }
-            </TitleAnimation>
+            <TitleAnimation>{repository.full_name}</TitleAnimation>
 
-            <Description numberOfLines={2}>{
-              //TODO - repository description
-            }</Description>
+            <Description numberOfLines={2}>{repository.description}</Description>
           </TextGroup>
         </RepoInfo>
 
         <RepoStats>
           <Stars>
-            <StarsCounter>{
-              // TODO - repository stargazers count
-            }</StarsCounter>
+            <StarsCounter>{repository.stargazers_count}</StarsCounter>
             <StarsText>Stars</StarsText>
           </Stars>
 
           <Forks>
-            <ForksCounter>{
-              // TODO - repository forks count
-            }</ForksCounter>
+            <ForksCounter>{repository.forks_count}</ForksCounter>
             <ForksText>Forks</ForksText>
           </Forks>
 
           <OpenIssues>
-            <OpenIssuesCounter>{
-              // TODO - repository issues count
-            }</OpenIssuesCounter>
+            <OpenIssuesCounter>{repository.open_issues_count}</OpenIssuesCounter>
             <OpenIssuesText>Issues{'\n'}Abertas</OpenIssuesText>
           </OpenIssues>
         </RepoStats>
@@ -93,7 +81,7 @@ export function Repository() {
                 title: issue.title,
                 subTitle: issue.user.login,
               }}
-            // TODO - onPress prop calling 
+              onPress={() => handleIssueNavigation(issue.html_url)}
             />
           )}
         />
@@ -101,3 +89,5 @@ export function Repository() {
     </Background>
   )
 }
+
+// https://api.github.com/repos/facebook/react/issues%7B/number%7D

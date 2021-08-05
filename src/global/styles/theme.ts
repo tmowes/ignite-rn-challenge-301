@@ -9,11 +9,11 @@ export default {
     gray_700: '#41414d',
     gray_800: '#3A3A3A',
 
-    green_200: '#04d361'
+    green_200: '#04d361',
   },
 
   fonts: {
     regular: 'Roboto_400Regular',
-    bold: 'Roboto_700Bold'
-  }
+    bold: 'Roboto_700Bold',
+  },
 }

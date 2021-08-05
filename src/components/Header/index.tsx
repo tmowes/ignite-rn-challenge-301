@@ -1,18 +1,17 @@
-import React from 'react';
+import React from 'react'
 
-import logoImg from '../../assets/images/logo/logo.png';
-
+import logoImg from '../../assets/images/logo/logo.png'
 import {
   Container,
   Logo,
   BackButton,
   Icon,
   BlankSpace,
-  SafeAreaViewIOS
-} from './styles';
+  SafeAreaViewIOS,
+} from './styles'
 
 interface HeaderProps {
-  goBack?: () => void;
+  goBack?: () => void
 }
 
 export function Header({ goBack }: HeaderProps) {

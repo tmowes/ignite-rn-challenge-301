@@ -1,36 +1,37 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+/* eslint-disable jest/expect-expect */
+import React from 'react'
 
-import { api } from '../../services/api';
-import MockAdapter from 'axios-mock-adapter';
+import { render, fireEvent } from '@testing-library/react-native'
+import MockAdapter from 'axios-mock-adapter'
 
-import { ProvidersWrapper } from '../../../jest-utils/wrapper';
-import { Dashboard } from '../../screens/Dashboard';
+import { api } from '../../services/api'
+import { ProvidersWrapper } from '../../../jest-utils/wrapper'
+import { Dashboard } from '../../screens/Dashboard'
 
 const mockedNavigate = jest.fn()
 
 jest.mock('@react-navigation/core', () => ({
   useNavigation: () => ({
-    navigate: mockedNavigate
-  })
-}));
+    navigate: mockedNavigate,
+  }),
+}))
 
 const axiosMock = new MockAdapter(api, {
-  delayResponse: 1000
-});
+  delayResponse: 1000,
+})
 
 const reactRepositoryResponse = {
   id: 0,
   full_name: 'facebook/react',
   owner: {
-    avatar_url: 'https://github.com/facebook.png'
+    avatar_url: 'https://github.com/facebook.png',
   },
   description: 'repository description',
   stargazers_count: 0,
   forks_count: 0,
   open_issues_count: 0,
-  issues_url: 'https://issues-url.com'
-};
+  issues_url: 'https://issues-url.com',
+}
 const issuesResponse = [
   {
     id: 0,
@@ -38,70 +39,64 @@ const issuesResponse = [
     html_url: 'issue-html_url',
     user: {
       login: 'user-login',
-    }
-  }
-];
+    },
+  },
+]
 
-axiosMock.onGet(`/repos/${reactRepositoryResponse.full_name}`)
-  .reply(200, reactRepositoryResponse);
-axiosMock.onGet(`repos/${reactRepositoryResponse.full_name}/issues`)
-  .reply(200, issuesResponse);
+axiosMock
+  .onGet(`/repos/${reactRepositoryResponse.full_name}`)
+  .reply(200, reactRepositoryResponse)
+axiosMock
+  .onGet(`repos/${reactRepositoryResponse.full_name}/issues`)
+  .reply(200, issuesResponse)
 
 describe('Dashboard', () => {
   it('should not be able to press search button when input is empty', async () => {
-    const {
-      getByPlaceholderText,
-      getByTestId,
-    } = render(<Dashboard />, {
+    const { getByPlaceholderText, getByTestId } = render(<Dashboard />, {
       wrapper: ProvidersWrapper,
-    });
+    })
 
-    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'");
-    const submitButton = getByTestId('input-button');
+    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'")
+    const submitButton = getByTestId('input-button')
 
-    expect(submitButton).toBeDisabled();
+    expect(submitButton).toBeDisabled()
 
-    fireEvent.changeText(textInput, 'repository-name');
+    fireEvent.changeText(textInput, 'repository-name')
 
-    expect(submitButton).not.toBeDisabled();
-  });
+    expect(submitButton).toBeEnabled()
+  })
 
   it('should be able to get repository', async () => {
     const { getByPlaceholderText, getByTestId, findByText } = render(<Dashboard />, {
-      wrapper: ProvidersWrapper
-    });
+      wrapper: ProvidersWrapper,
+    })
 
-    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'");
-    const submitButton = getByTestId('input-button');
+    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'")
+    const submitButton = getByTestId('input-button')
 
-    fireEvent.changeText(textInput, reactRepositoryResponse.full_name);
-    fireEvent.press(submitButton);
+    fireEvent.changeText(textInput, reactRepositoryResponse.full_name)
+    fireEvent.press(submitButton)
 
-    await findByText(reactRepositoryResponse.full_name);
-  });
+    await findByText(reactRepositoryResponse.full_name)
+  })
 
   it('should navigate to Repository page when repository card is pressed', async () => {
-    const {
-      getByPlaceholderText,
-      getByTestId,
-      findByText,
-    } = render(<Dashboard />, {
+    const { getByPlaceholderText, getByTestId, findByText } = render(<Dashboard />, {
       wrapper: ProvidersWrapper,
-    });
+    })
 
-    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'");
-    const submitButton = getByTestId('input-button');
+    const textInput = getByPlaceholderText("Digite aqui 'usuário/repositório'")
+    const submitButton = getByTestId('input-button')
 
-    fireEvent.changeText(textInput, reactRepositoryResponse.full_name);
-    fireEvent.press(submitButton);
+    fireEvent.changeText(textInput, reactRepositoryResponse.full_name)
+    fireEvent.press(submitButton)
 
-    const repositoryCard = await findByText(reactRepositoryResponse.full_name);
+    const repositoryCard = await findByText(reactRepositoryResponse.full_name)
 
-    fireEvent.press(repositoryCard);
+    fireEvent.press(repositoryCard)
 
-    expect(mockedNavigate).toHaveBeenCalledWith(
-      'Repository', {
-      repositoryId: reactRepositoryResponse.id
-    });
-  });
-});
+    expect(mockedNavigate).toHaveBeenCalledWith('Repository', {
+      repositoryId: reactRepositoryResponse.id,
+    })
+  })
+})
